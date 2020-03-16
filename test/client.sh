@@ -4,4 +4,6 @@ curl "http://localhost:9999/login" -X POST -d '{"user":"李四","passwd":"qwert"
 curl "http://localhost:9999/login?user=axing&passwd=123456"
 curl "http://localhost:9999/v1?user=axing&passwd=123456"
 curl "http://localhost:9999/v1/user?user=axing&passwd=123456"
+curl "http://localhost:9999/"
+curl "http://localhost:9999"
 

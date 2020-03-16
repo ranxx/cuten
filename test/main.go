@@ -17,7 +17,12 @@ func main() {
 			ctx.String(http.StatusOK, "%s\n", ctx.Path)
 		})
 	}
-
+	e.Use(func(ctx *cuten.Context) {
+		fmt.Printf("我是/路由中间件\n")
+	})
+	v1.Use(func(ctx *cuten.Context) {
+		fmt.Printf("我是/v1路由中间件\n")
+	})
 	e.GET("/", func(ctx *cuten.Context) {
 		ctx.JSON(http.StatusOK, map[string]string{"axing": ctx.Path})
 	})

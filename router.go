@@ -47,6 +47,10 @@ func (r *router) addRouter(method, pattern string, handler HandlerFunc) {
 	r.handlers[method+join+pattern] = handler
 }
 
+func (r *router) matchRouter() {
+
+}
+
 func (r *router) handle(ctx *Context) {
 	// fmt.Printf("handlers:\t%#v\n", r.handlers)
 	// fmt.Printf("roots:\t%#v\n", r.roots)
@@ -86,21 +90,29 @@ func (r *router) handle(ctx *Context) {
 		ctx.parseURLParam(register)
 	}
 
-	handler(ctx)
+	ctx.handlers = append(ctx.handlers, handler)
+	ctx.Next()
+	// handler(ctx)
 }
 
 type RouterGroup struct {
-	prefix string
-	parent *RouterGroup
-	engine *Engine
+	prefix   string
+	parent   *RouterGroup
+	engine   *Engine
+	handlers []HandlerFunc
+}
+
+func (g *RouterGroup) Use(f HandlerFunc) {
+	g.handlers = append(g.handlers, f)
 }
 
 func (g *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := g.engine
 	newGroup := &RouterGroup{
-		prefix: g.prefix + prefix,
-		parent: g,
-		engine: engine,
+		prefix:   g.prefix + prefix,
+		parent:   g,
+		engine:   engine,
+		handlers: make([]HandlerFunc, 0, 3),
 	}
 	engine.groups = append(engine.groups, newGroup)
 	return newGroup

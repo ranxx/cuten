@@ -16,7 +16,8 @@ type Context struct {
 	Method      string
 	StatuscCode int
 	URLParam    map[string]string
-	// RegistURL   string
+	handlers    []HandlerFunc
+	index       int
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
@@ -27,6 +28,8 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 		Method:      r.Method,
 		StatuscCode: 200,
 		URLParam:    make(map[string]string),
+		handlers:    make([]HandlerFunc, 0, 3),
+		index:       -1,
 	}
 }
 
@@ -91,5 +94,13 @@ func (ctx *Context) parseURLParam(register string) {
 		if len(v) > 0 && v[0] == ':' {
 			ctx.URLParam[v[1:]] = p2[i]
 		}
+	}
+}
+
+func (ctx *Context) Next() {
+	ctx.index++
+	s := len(ctx.handlers)
+	for ; ctx.index < s; ctx.index++ {
+		ctx.handlers[ctx.index](ctx)
 	}
 }

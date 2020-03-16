@@ -8,6 +8,16 @@ import (
 
 func main() {
 	e := cuten.New()
+	v1 := e.Group("/v1")
+	{
+		v1.GET("", func(ctx *cuten.Context) {
+			ctx.String(http.StatusOK, "/v1\n")
+		})
+		v1.GET("/user", func(ctx *cuten.Context) {
+			ctx.String(http.StatusOK, "%s\n", ctx.Path)
+		})
+	}
+
 	e.GET("/", func(ctx *cuten.Context) {
 		ctx.JSON(http.StatusOK, map[string]string{"axing": ctx.Path})
 	})

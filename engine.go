@@ -9,7 +9,9 @@ type HandlerFunc func(ctx *Context)
 
 // Engine implement the interface of http.Handler
 type Engine struct {
+	*RouterGroup
 	router *router
+	groups []*RouterGroup
 }
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +20,12 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // New is constructor of cuten.Engine
 func New() *Engine {
-	return &Engine{
+	e := &Engine{
 		router: newRouter(),
+		groups: make([]*RouterGroup, 0, 10),
 	}
+	e.RouterGroup = &RouterGroup{engine: e}
+	return e
 }
 
 func (e *Engine) addRouter(method, pattern string, f HandlerFunc) {

@@ -88,3 +88,33 @@ func (r *router) handle(ctx *Context) {
 
 	handler(ctx)
 }
+
+type RouterGroup struct {
+	prefix string
+	parent *RouterGroup
+	engine *Engine
+}
+
+func (g *RouterGroup) Group(prefix string) *RouterGroup {
+	engine := g.engine
+	newGroup := &RouterGroup{
+		prefix: g.prefix + prefix,
+		parent: g,
+		engine: engine,
+	}
+	engine.groups = append(engine.groups, newGroup)
+	return newGroup
+}
+
+func (g *RouterGroup) addRouter(method, pattern string, handler HandlerFunc) {
+	pattern = g.prefix + pattern
+	g.engine.router.addRouter(method, pattern, handler)
+}
+
+func (g *RouterGroup) GET(pattern string, handler HandlerFunc) {
+	g.addRouter("GET", pattern, handler)
+}
+
+func (g *RouterGroup) POST(pattern string, handler HandlerFunc) {
+	g.addRouter("POST", pattern, handler)
+}

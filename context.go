@@ -21,7 +21,7 @@ type Context struct {
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
-	return &Context{
+	ctx := &Context{
 		Writer:      w,
 		Req:         r,
 		Path:        r.URL.Path,
@@ -31,6 +31,9 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 		handlers:    make([]HandlerFunc, 0, 3),
 		index:       -1,
 	}
+	// 防止程序panic
+	ctx.handlers = append(ctx.handlers, Recovery())
+	return ctx
 }
 
 // PostForm return the value of the HTTPbody

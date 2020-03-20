@@ -53,6 +53,5 @@ func (e *Engine) addRouter(method, pattern string, f HandlerFunc) {
 
 // Run start router
 func (e *Engine) Run(addr string) error {
-	// fmt.Println(*e.router)
 	return http.ListenAndServe(addr, e)
 }

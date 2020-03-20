@@ -46,6 +46,9 @@ func main() {
 	e.POST("/login/:user", func(ctx *cuten.Context) {
 		ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "user": ctx.URLParam["user"], "passwd": ctx.PostForm("passwd")})
 	})
+	e.POST("/login/:user/info", func(ctx *cuten.Context) {
+		ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "user": ctx.URLParam["user"], "passwd": ctx.PostForm("passwd"), "info": "nil"})
+	})
 	e.GET("/login", func(ctx *cuten.Context) {
 		ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "user": ctx.Quary("user"), "passwd": ctx.Quary("passwd")})
 	})
@@ -63,7 +66,7 @@ func main() {
 		// 	ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "css-filename": ctx.URLParam["filename"]})
 		// })
 		file.GET("/css/*filename", func(ctx *cuten.Context) {
-			ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "css-name": ctx.URLParam["filename"]})
+			ctx.JSON(http.StatusOK, map[string]string{"URL": ctx.Path, "css-name": ctx.URLParam["filename"][100:]})
 		})
 	}
 

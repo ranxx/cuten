@@ -62,6 +62,9 @@ func (ctx *Context) SetHeader(key, value string) {
 func (ctx *Context) String(code int, format string, values ...interface{}) {
 	ctx.SetHeader("Content-Type", "text/plain")
 	ctx.Status(code)
+	if code != http.StatusOK {
+		fmt.Println(fileinfo(2))
+	}
 	ctx.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 
@@ -93,6 +96,8 @@ func (ctx *Context) parseURLParam(register string) {
 	for i, v := range p1 {
 		if len(v) > 0 && v[0] == ':' {
 			ctx.URLParam[v[1:]] = p2[i]
+		} else if len(v) > 0 && v[0] == '*' {
+			ctx.URLParam[v[1:]] = p2[i] + ctx.Path[strings.Index(ctx.Path, p2[i])+len(p2[i]):]
 		}
 	}
 }

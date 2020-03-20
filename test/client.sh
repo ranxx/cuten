@@ -6,4 +6,7 @@ curl "http://localhost:9999/v1?user=axing&passwd=123456"
 curl "http://localhost:9999/v1/user?user=axing&passwd=123456"
 curl "http://localhost:9999/"
 curl "http://localhost:9999"
+curl "http://localhost:9999/file/file/anudoa/asfdnioap.xkx"
+curl "http://localhost:9999/file/file/css/asfdnioap.xkx"
+curl "http://localhost:9999/file/css/asfdnioap.xkx"
 

@@ -1,6 +1,7 @@
 package cuten
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -24,7 +25,7 @@ func newRouter() *router {
 func (r *router) addRouter(method, pattern string, handler HandlerFunc) {
 	if _, ok := r.handlers[method+join+pattern]; ok {
 		// 已经注册过
-		return
+		panic(fmt.Sprintf("%s already register !", method+join+pattern))
 	}
 	if pattern != "/" {
 		// 解析
@@ -42,6 +43,7 @@ func (r *router) addRouter(method, pattern string, handler HandlerFunc) {
 			root = &node{pattern: pattern, part: parts[0], precise: true}
 			r.roots[method+join+parts[0]] = root
 		}
+		// 后面的层
 		root.insert(pattern, parts[1:], 0)
 	}
 	r.handlers[method+join+pattern] = handler
@@ -86,13 +88,11 @@ func (r *router) handle(ctx *Context) {
 	}
 
 	// 处理参数
-	if strings.Index(register, ":") != -1 {
+	if strings.Index(register, ":") != -1 || strings.Index(register, "*") != -1 {
 		ctx.parseURLParam(register)
 	}
-
 	ctx.handlers = append(ctx.handlers, handler)
 	ctx.Next()
-	// handler(ctx)
 }
 
 type RouterGroup struct {

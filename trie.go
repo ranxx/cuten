@@ -1,5 +1,7 @@
 package cuten
 
+import "fmt"
+
 type node struct {
 	pattern  string
 	part     string  // 路由的某部分，例如/user/admin中的 /admin
@@ -10,7 +12,7 @@ type node struct {
 // 这里应该只有一个child，如果1个以上，会产生路由分歧
 func (n *node) matchChild(part string) *node {
 	for _, n2 := range n.children {
-		if n2.part == part || !n2.precise {
+		if n2.part == part {
 			return n2
 		}
 	}
@@ -28,9 +30,26 @@ func (n *node) matchChildren(part string) []*node {
 	return ret
 }
 
+/*
+	/user/:id
+	/user/*
+	这种路由会冲突
+	/user/*
+	/user/cliend/:d
+	/user/cliend/*
+	这种路由也会冲突
+	*路由 层级及其以后不能有路由层级
+*/
+
 func (n *node) insert(pattern string, parts []string, height int) {
 	if len(parts) == height {
 		return
+	}
+	// 查看child里面是否有*
+	for _, v := range n.children {
+		if v.part[0] == '*' {
+			panic(fmt.Sprintf("pattern:%s, part:%s already register !", v.pattern, v.part))
+		}
 	}
 	part := parts[height]
 	child := n.matchChild(part)
@@ -43,10 +62,13 @@ func (n *node) insert(pattern string, parts []string, height int) {
 
 func (n *node) search(parts []string, height int) *node {
 	if len(parts) == height {
-		if n.pattern != "" {
+		if n.pattern != "" || !n.precise {
 			return n
 		}
 		return nil
+	}
+	if n.part[0] == '*' {
+		return n
 	}
 	part := parts[height]
 	children := n.matchChildren(part)

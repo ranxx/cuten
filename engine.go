@@ -39,6 +39,8 @@ func New() *Engine {
 
 func (e *Engine) addRouter(method, pattern string, f HandlerFunc) {
 	e.router.addRouter(method, pattern, f)
+	// 注册打印
+	debug("%s%s Route %s%s %s%s\n", TCBlue, nowTimeString(), method, nspac[7-len(method)], pattern, TCDefault)
 }
 
 // // GET add get request

@@ -10,29 +10,31 @@ import (
 // type H map[string]interface{}
 
 type Context struct {
-	Writer      http.ResponseWriter
-	Req         *http.Request
-	Path        string
-	Method      string
-	StatuscCode int
-	URLParam    map[string]string
-	handlers    []HandlerFunc
-	index       int
+	Writer     http.ResponseWriter
+	Req        *http.Request
+	Path       string
+	Method     string
+	StatusCode int
+	URLParam   map[string]string
+	handlers   []HandlerFunc
+	index      int
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
 	ctx := &Context{
-		Writer:      w,
-		Req:         r,
-		Path:        r.URL.Path,
-		Method:      r.Method,
-		StatuscCode: 200,
-		URLParam:    make(map[string]string),
-		handlers:    make([]HandlerFunc, 0, 3),
-		index:       -1,
+		Writer:     w,
+		Req:        r,
+		Path:       r.URL.Path,
+		Method:     r.Method,
+		StatusCode: 200,
+		URLParam:   make(map[string]string),
+		handlers:   make([]HandlerFunc, 0, 3),
+		index:      -1,
 	}
 	// 防止程序panic
-	ctx.handlers = append(ctx.handlers, Recovery())
+	ctx.handlers = append(ctx.handlers, recovery())
+	// 记录调用时长
+	ctx.handlers = append(ctx.handlers, handlerSpendTime())
 	return ctx
 }
 
@@ -46,13 +48,9 @@ func (ctx *Context) Quary(key string) string {
 	return ctx.Req.URL.Query().Get(key)
 }
 
-func (ctx *Context) Param(key string) {
-
-}
-
 // Status HTTP status code
 func (ctx *Context) Status(code int) {
-	ctx.StatuscCode = code
+	ctx.StatusCode = code
 	ctx.Writer.WriteHeader(code)
 }
 
@@ -65,9 +63,6 @@ func (ctx *Context) SetHeader(key, value string) {
 func (ctx *Context) String(code int, format string, values ...interface{}) {
 	ctx.SetHeader("Content-Type", "text/plain")
 	ctx.Status(code)
-	if code != http.StatusOK {
-		fmt.Println(fileinfo(2))
-	}
 	ctx.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 

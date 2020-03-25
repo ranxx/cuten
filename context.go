@@ -86,7 +86,14 @@ func (ctx *Context) Data(code int, data []byte) {
 func (ctx *Context) HTML(code int, path string) {
 	ctx.SetHeader("Content-Type", "text/html")
 	ctx.Status(code)
-	data, _ := ioutil.ReadFile("./html.html")
+	data, _ := ioutil.ReadFile(path)
+	ctx.Writer.Write(data)
+}
+
+func (ctx *Context) File(code int, path, contentType string) {
+	ctx.SetHeader("Content-Type", contentType)
+	ctx.Status(code)
+	data, _ := ioutil.ReadFile(path)
 	ctx.Writer.Write(data)
 }
 

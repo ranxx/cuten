@@ -3,6 +3,7 @@ package cuten
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -82,10 +83,11 @@ func (ctx *Context) Data(code int, data []byte) {
 }
 
 // HTML resp message type
-func (ctx *Context) HTML(code int, html string) {
+func (ctx *Context) HTML(code int, path string) {
 	ctx.SetHeader("Content-Type", "text/html")
 	ctx.Status(code)
-	ctx.Writer.Write([]byte(html))
+	data, _ := ioutil.ReadFile("./html.html")
+	ctx.Writer.Write(data)
 }
 
 func (ctx *Context) parseURLParam(register string) {

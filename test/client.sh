@@ -10,4 +10,4 @@ curl "http://localhost:9999/file/file/anudoa/asfdnioap.xkx"
 curl "http://localhost:9999/file/file/css/asfdnioap.xkx"
 curl "http://localhost:9999/file/css/asfdnioap.xkx"
 curl "http://localhost:9999/filsdsdse/css/asfdnioap.xkx"
-
+curl "http://localhost:9999/mid"

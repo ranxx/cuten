@@ -71,5 +71,16 @@ func main() {
 		})
 	}
 
+	mid := e.Group("/mid")
+	{
+		mid.GET("",
+			func(ctx *cuten.Context) {
+				fmt.Println("/mid 前置逻辑")
+			},
+			func(ctx *cuten.Context) {
+				fmt.Println("/mid 后置逻辑")
+			})
+	}
+
 	fmt.Println(e.Run(":9999"))
 }

@@ -22,9 +22,10 @@ var (
 
 // Terminal color
 var (
-	TCBlue    = TerminalColor("\033[1;36;40m")
-	TCRed     = TerminalColor("\033[1;31;40m")
-	TCGreen   = TerminalColor("\033[1;32;40m")
+	TCBlue    = TerminalColor("\033[1;36m")
+	TCRed     = TerminalColor("\033[1;31m")
+	TCGreen   = TerminalColor("\033[1;32m")
+	TCYellow  = TerminalColor("\033[1;33m")
 	TCDefault = TerminalColor("\033[0m")
 )
 
@@ -65,13 +66,15 @@ func handlerSpendTime() HandlerFunc {
 		defer func() {
 			spendTime := time.Now().Sub(start)
 			err := recover()
-			if err != nil {
+			if err != nil && ctx.StatusCode == http.StatusOK {
 				ctx.StatusCode = http.StatusInternalServerError
 			}
 			if ctx.StatusCode == http.StatusOK {
 				debug("%s%s [%d] %s%s %s in %v%s\n", TCGreen, nowTimeString(), ctx.StatusCode, ctx.Method, reNSpace(ctx.Method), ctx.Path, spendTime, TCDefault)
-			} else {
+			} else if err != nil {
 				debug("%s%s [%d] %s%s %s %s in %v%s\n", TCRed, nowTimeString(), ctx.StatusCode, ctx.Method, reNSpace(ctx.Method), ctx.Path, err, spendTime, TCDefault)
+			} else if ctx.StatusCode != http.StatusOK {
+				debug("%s%s [%d] %s%s %s in %v%s\n", TCYellow, nowTimeString(), ctx.StatusCode, ctx.Method, reNSpace(ctx.Method), ctx.Path, spendTime, TCDefault)
 			}
 			if err != nil {
 				panic(err)
